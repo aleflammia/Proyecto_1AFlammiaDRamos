@@ -23,7 +23,6 @@ public class ListaPedido {
     }
     
     public ListaPedido(int capacidad){
-        capacidad = capacidad;
         pedidos = new Pedido[capacidad];
     }
     

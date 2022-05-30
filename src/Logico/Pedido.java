@@ -28,4 +28,5 @@ public class Pedido {
     public void setListaProductosPedido(ListaProducto productosPedido) {
         this.productosPedido = productosPedido;
     }
+    
 }

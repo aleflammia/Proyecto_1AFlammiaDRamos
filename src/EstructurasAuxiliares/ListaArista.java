@@ -31,6 +31,7 @@ public class ListaArista {
         return cont;
     }
     
+    
     public Arista[] getAristas(){
         return aristas;
     }
