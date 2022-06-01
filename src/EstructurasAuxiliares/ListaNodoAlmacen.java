@@ -23,7 +23,6 @@ public class ListaNodoAlmacen{
     }
     
     public ListaNodoAlmacen(int capacidad){
-        capacidad = capacidad;
         almacenes = new NodoAlmacen[capacidad];
     }
     

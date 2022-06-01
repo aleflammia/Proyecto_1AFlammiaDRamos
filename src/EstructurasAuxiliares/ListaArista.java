@@ -23,14 +23,12 @@ public class ListaArista {
     }
     
     public ListaArista(int capacidad){
-        capacidad = capacidad;
         aristas = new Arista[capacidad];
     }
     
     public int getSize(){
         return cont;
     }
-    
     
     public Arista[] getAristas(){
         return aristas;
