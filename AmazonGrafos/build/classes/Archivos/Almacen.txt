@@ -1,0 +1,25 @@
+Almacenes;
+Almacen A:
+Pantalla,3
+RAM,2
+Procesador,1;
+Almacen B:
+Pantalla,3
+Grafica,5;
+Almacen C:
+Placa,7
+Teclado,8;
+Almacen D:
+Mouse,2;
+Almacen E:
+Microfono,7;
+Audifonos,10;
+Rutas;
+A,B,10
+A,C,20
+B,C,5
+B,D,8
+C,D,4
+C,E,13
+D,E,3
+E,A,25
