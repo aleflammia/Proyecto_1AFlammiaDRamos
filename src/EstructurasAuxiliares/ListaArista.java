@@ -23,6 +23,7 @@ public class ListaArista {
     }
     
     public ListaArista(int capacidad){
+
         aristas = new Arista[capacidad];
     }
     

@@ -7,7 +7,6 @@ package EstructurasAuxiliares;
 import java.util.Arrays;
 import Logico.Producto;
 
-
 /**
  *
  * @author Alessandro
@@ -24,6 +23,7 @@ public class ListaProducto {
     }
     
     public ListaProducto(int capacidad){
+        capacidad = capacidad;
         productos = new Producto[capacidad];
     }
     
