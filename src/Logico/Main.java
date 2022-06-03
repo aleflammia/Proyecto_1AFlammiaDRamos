@@ -1,5 +1,6 @@
 package Logico;
 
+import EstructurasAuxiliares.ListaNodoAlmacen;
 import EstructurasAuxiliares.ListaProducto;
 import javax.swing.JOptionPane;
 
@@ -9,7 +10,7 @@ import javax.swing.JOptionPane;
  */
 public class Main {
     
-    public static void main(String[] args) {        
+    public static void main(String[] args) {
         while(true){
             int opc = Integer.parseInt(JOptionPane.showInputDialog(null, "(1) Cargar Archivo \n(2) Reportar \n(3) Hacer Pedido \n(4)Agregar un nuevo Almacen - Para implementar en lo gráfico de verdad \n(5) Agregar un nuevo Camino - Para implementar en lo gráfico de verdad \n(6) Gestión de Stock - Para implementar en lo gráfico de verdad", "Menú", JOptionPane.QUESTION_MESSAGE));
             if (opc == 1) {

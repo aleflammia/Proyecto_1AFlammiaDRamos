@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -168,11 +169,11 @@ public class Amazon {
 
         ListaNodoAlmacen trayectoria = new ListaNodoAlmacen();
         NodoAlmacen almacen = nodoDestino;
-        while (almacen != null) {            
+        while (almacen != null) {
             trayectoria.add(almacen);
             almacen = almacen.getNodoAnterior();
         }
-        
+
         invertir(trayectoria.getAlmacenes());
         return nodoDestino;
     }
@@ -200,7 +201,7 @@ public class Amazon {
         return datos;
     }
 
-    private void setAlmacenFalse() {
+    public void setAlmacenFalse() {
         for (NodoAlmacen NodoAlmacen : misAlmacenes.getAlmacenes()) {
             NodoAlmacen.setVisitado(false);
             for (Arista aristas : NodoAlmacen.getListaArista().getAristas()) {
@@ -224,6 +225,7 @@ public class Amazon {
             for (Producto producto : actualVertex.getListaProducto().getProductos()) {
                 if (producto.getStock() > 0) {
                     datos += "NOMBRE: " + producto.getNombre() + " STOCK: " + producto.getStock() + "\n";
+                    //System.out.println(datos);
                 }
             }
             for (Arista arista : actualVertex.getListaArista().getAristas()) {
@@ -248,10 +250,11 @@ public class Amazon {
         }
     }
 
-    public void cargarDatos(String direccion) {
+    public ListaNodoAlmacen cargarDatos(String direccion) {
         BufferedReader obj = null;
+        ListaNodoAlmacen almacenesCargados = null;
         try {
-            ListaNodoAlmacen almacenesCargados = new ListaNodoAlmacen();
+            almacenesCargados = new ListaNodoAlmacen();
             NodoAlmacen almacen = null;
             int control = 0;
             File doc = new File(direccion);
@@ -275,10 +278,12 @@ public class Amazon {
                         if (strng.contains(",") && !strng.contains(";")) {
                             Producto producto = new Producto(strng.substring(0, strng.indexOf(",")), Integer.parseInt(strng.substring(strng.indexOf(",") + 1)), almacen);
                             almacen.getListaProducto().add(producto);
+
                         } else if (strng.contains(",") && strng.contains(";")) {
                             Producto producto = new Producto(strng.substring(0, strng.indexOf(",")), Integer.parseInt(strng.substring(strng.indexOf(",") + 1, strng.indexOf(";"))), almacen);
                             almacen.getListaProducto().add(producto);
                         }
+
                     }
                     if (control == 2) {
                         if (!strng.contains(";")) {
@@ -293,18 +298,89 @@ public class Amazon {
                                     almacenDestino = almacenAux;
                                 }
                             }
+                            if ((almacenOrigen == null || almacenDestino == null) && misAlmacenes.getAlmacenes() != null) {
+                                for (NodoAlmacen almacenAux2 : misAlmacenes.getAlmacenes()) {
+                                    if (almacenAux2.getNombre().equalsIgnoreCase(aristaDatos[0])) {
+                                        almacenOrigen = almacenAux2;
+                                    }
+                                    if (almacenAux2.getNombre().equalsIgnoreCase(aristaDatos[1])) {
+                                        almacenDestino = almacenAux2;
+
+                                    }
+                                }
+                            }
+                            
                             almacenOrigen.getListaArista().add(new Arista(almacenOrigen, almacenDestino, Integer.parseInt(aristaDatos[2])));
                         }
                     }
-                    datosCargados += (strng + "\n");
+                    datosCargados += (strng+"\n");
+                    System.out.println(strng);
                 }
             } catch (IOException ex) {
                 Logger.getLogger(Amazon.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-            int opc = JOptionPane.showConfirmDialog(null, datosCargados + "\n\nLos datos han sido cargados correctamente, desea actualizar para guardalos en memoria", "Guardar archivos", JOptionPane.YES_NO_OPTION);
-            if (opc == JOptionPane.YES_OPTION) {
-                actualizarRepositorio(almacenesCargados);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Amazon.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                obj.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Amazon.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return almacenesCargados;
+    }
+
+    public void cargarFichero(String direccion) {
+        BufferedReader obj = null;
+        try {
+            NodoAlmacen almacen = null;
+            int control = 0;
+            File doc = new File(direccion);
+            obj = new BufferedReader(new FileReader(doc));
+            String strng;
+            try {
+                while ((strng = obj.readLine()) != null) {
+                    if (strng.equalsIgnoreCase("Almacenes;")) {
+                        control = 1;
+                    }
+                    if (strng.equalsIgnoreCase("Rutas;")) {
+                        control = 2;
+                    }
+
+                    if (control == 1) {
+                        if (strng.contains("Almacen") && !strng.contains(";")) {
+                            almacen = new NodoAlmacen(strng.substring(strng.indexOf(" ") + 1, strng.indexOf(":")));
+                            misAlmacenes.add(almacen);
+                        }
+                        if (strng.contains(",") && !strng.contains(";")) {
+                            Producto producto = new Producto(strng.substring(0, strng.indexOf(",")), Integer.parseInt(strng.substring(strng.indexOf(",") + 1)), almacen);
+                            almacen.getListaProducto().add(producto);
+                        } else if (strng.contains(",") && strng.contains(";")) {
+                            Producto producto = new Producto(strng.substring(0, strng.indexOf(",")), Integer.parseInt(strng.substring(strng.indexOf(",") + 1, strng.indexOf(";"))), almacen);
+                            almacen.getListaProducto().add(producto);
+                        }
+                    }
+                    if (control == 2) {
+                        if (!strng.contains(";")) {
+                            String[] aristaDatos = strng.split(",");
+                            NodoAlmacen almacenOrigen = null, almacenDestino = null;
+
+                            for (NodoAlmacen almacenAux : misAlmacenes.getAlmacenes()) {
+                                if (almacenAux.getNombre().equalsIgnoreCase(aristaDatos[0])) {
+                                    almacenOrigen = almacenAux;
+                                }
+                                if (almacenAux.getNombre().equalsIgnoreCase(aristaDatos[1])) {
+                                    almacenDestino = almacenAux;
+                                }
+                            }
+                            almacenOrigen.getListaArista().add(new Arista(almacenOrigen, almacenDestino, Integer.parseInt(aristaDatos[2])));
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Amazon.class.getName()).log(Level.SEVERE, null, ex);
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Amazon.class.getName()).log(Level.SEVERE, null, ex);
@@ -326,35 +402,91 @@ public class Amazon {
         return null;
     }
 
-    private void actualizarRepositorio(ListaNodoAlmacen almacenesCargados) {
-        for (NodoAlmacen almacen : almacenesCargados.getAlmacenes()) {
-            misAlmacenes.add(almacen);
-            for (Producto producto : almacen.getListaProducto().getProductos()) {
-                addProducto(producto);
+    public void actualizarRepositorio(ListaNodoAlmacen almacenesCargados) {
+        try {
+            boolean encontrado = false;
+            ListaNodoAlmacen almacenesAux = new ListaNodoAlmacen();
+            for (NodoAlmacen almacen1 : almacenesCargados.getAlmacenes()) {
+                for (NodoAlmacen almacen2 : misAlmacenes.getAlmacenes()) {
+                    if (almacen1.getNombre().equalsIgnoreCase(almacen2.getNombre())) {
+                        encontrado = true;
+                    }
+                }
+                if (encontrado) {
+                    JOptionPane.showMessageDialog(null, "El almacen " + almacen1.getNombre() + " no pudo se guardado por que ya se encuentra en la lista");
+                }else{
+                    almacenesAux.add(almacen1);
+                }
+                encontrado = false;
             }
+            
+            if (almacenesAux.getSize() <= 0) {
+                return;
+            }else{
+                ListaNodoAlmacen almacenAux2 = misAlmacenes;
+                misAlmacenes = null;
+                misProductos = null;
+                for (NodoAlmacen a: almacenAux2.getAlmacenes()) {
+                    almacenesAux.add(a);
+                }
+                misAlmacenes = new ListaNodoAlmacen();
+                for (NodoAlmacen almacen : almacenesAux.getAlmacenes()) {
+                    misAlmacenes.add(almacen);
+                }
+            }
+            FileWriter archivoDatos = null;
+            archivoDatos = new FileWriter("src/Archivos/Amazon.txt");
+            String datos = "";
+            datos = "Almacenes;\n";
+            for (NodoAlmacen almacen : misAlmacenes.getAlmacenes()) {
+                datos += "Almacen " + almacen.getNombre() + ":\n";
+                for (int i = 0; i < almacen.getListaProducto().getSize(); i++) {
+                    datos += almacen.getListaProducto().getProductos()[i].getNombre() + "," + almacen.getListaProducto().getProductos()[i].getStock();
+                    if (i == almacen.getListaProducto().getSize() - 1) {
+                        datos += ";\n";
+                    } else {
+                        datos += "\n";
+                    }
+                }
+            }
+            datos += "Rutas;\n";
+            for (NodoAlmacen almacen : misAlmacenes.getAlmacenes()) {
+                for (Arista arista : almacen.getListaArista().getAristas()) {
+                    datos += arista.getNodoOrigen().getNombre() + "," + arista.getNodoDestino().getNombre() + "," + arista.getDistancia() + "\n";
+                }
+            }
+            archivoDatos.write("");
+            archivoDatos.write(datos);
+            archivoDatos.close();
+            JOptionPane.showMessageDialog(null, "Archivo creado Correctamente");
+
+        } catch (IOException ex) {
+            Logger.getLogger(Amazon.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "No se pudo actualizar el repositorio " + ex);
         }
     }
 
-    void reportar() {
+    public void reportar() {
+        setAlmacenFalse();
         String reporte = "";
         for (int i = 0; i < 2; i++) {
             long inicioTiempo = System.nanoTime();
-                if(i == 0) {
-                    reporte += reporteBFS(misAlmacenes.getAlmacenByIndex(0));
-                }else{
-                    reporte += reporteBFS(misAlmacenes.getAlmacenByIndex(0));
-                }
+            if (i == 0) {
+                reporte += reporteBFS(misAlmacenes.getAlmacenByIndex(0));
+            } else {
+                reporte += reporteDFS(misAlmacenes.getAlmacenByIndex(0));
+            }
             setAlmacenFalse();
             long finTiempo = System.nanoTime();
 
-            double tiempo = (double)((finTiempo - inicioTiempo)/1000000);
+            double tiempo = (double) ((finTiempo - inicioTiempo) / 1000000);
             reporte += "\nEl tiempo de corrida fue de " + tiempo + " Milisegundos\n";
         }
-        
+
         JOptionPane.showMessageDialog(null, reporte);
     }
 
-    Producto buscarProducto(String nombreProducto, String nombreAlmacen) {
+    public Producto buscarProducto(String nombreProducto, String nombreAlmacen) {
         NodoAlmacen almacen = getAlmacen(nombreAlmacen);
         for (Producto producto : almacen.getListaProducto().getProductos()) {
             if (producto.getNombre().equalsIgnoreCase(nombreProducto)) {
