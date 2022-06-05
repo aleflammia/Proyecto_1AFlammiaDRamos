@@ -46,4 +46,9 @@ public class ListaArista {
         }
         aristas[cont - 1] = arista;
     }
+    public void eliminarTodos(){
+        aristas = new Arista[1];
+        capacidad = 1;
+        cont = 0;
+    }
 }

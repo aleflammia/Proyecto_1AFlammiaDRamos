@@ -10,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
@@ -83,13 +85,18 @@ public class Amazon {
             if (producto.getStock() <= 0) {
                 JOptionPane.showMessageDialog(null, "Para el producto " + producto.getNombre() + " del almacen " + producto.getAlmacen().getNombre() + " no hay Sotck, por lo que se procederá a buscar en el almacén más cercano\n");
                 Producto productoStock = buscarEnOtroAlmacen(producto);
-                productoStock.setStock(productoStock.getStock() - 1);
-                listaProductos.add(productoStock);
+                if (productoStock == null) {
+                    JOptionPane.showMessageDialog(null, "El producto " + producto.getNombre() + " no fue encontrado en otro almacen");
+                }else{
+                    productoStock.setStock(productoStock.getStock() - 1);
+                    listaProductos.add(productoStock);
+                }
             } else {
                 producto.setStock(producto.getStock() - 1);
                 listaProductos.add(producto);
             }
         }
+        JOptionPane.showMessageDialog(null, "El pedido fue realizado con exito");
         pedido.setListaProductosPedido(listaProductos);
         misPedidos.add(pedido);
     }
@@ -101,17 +108,24 @@ public class Amazon {
         int distMayor = distanciaMayor(producto);
         for (NodoAlmacen almacenDestino : misAlmacenes.getAlmacenes()) {
             for (Producto productoTemp : almacenDestino.getListaProducto().getProductos()) {
-                if (productoTemp.getNombre().equalsIgnoreCase(producto.getNombre())) {
-                    if (productoTemp.getStock() > 0) {
-                        if (dijkstra(producto.getAlmacen(), almacenDestino).getMinDistancia() < distMayor) {
-                            almacen = dijkstra(producto.getAlmacen(), almacenDestino);
-                            productoStock = productoTemp;
-                            distMayor = (int) dijkstra(producto.getAlmacen(), almacenDestino).getMinDistancia();
+                if (productoTemp != null) {
+                    if (productoTemp.getNombre().equalsIgnoreCase(producto.getNombre())) {
+                        if (productoTemp.getStock() > 0) {
+                            if (dijkstra(producto.getAlmacen(), almacenDestino).getMinDistancia() <= distMayor) {
+                                almacen = dijkstra(producto.getAlmacen(), almacenDestino);
+                                productoStock = productoTemp;
+                                distMayor = (int) dijkstra(producto.getAlmacen(), almacenDestino).getMinDistancia();
+                            }
                         }
                     }
                 }
+                
             }
         }
+        if (almacen == null || productoStock == null) {
+            return null;
+        }
+        
         datos += "Se tomó un producto del almacen " + almacen.getNombre() + ", que es el más cercano con " + almacen.getMinDistancia() + "KM\n\nSu Trayectoria es: ";
 
         ListaNodoAlmacen trayectoria = new ListaNodoAlmacen();
@@ -119,9 +133,15 @@ public class Amazon {
             trayectoria.add(almacen);
             almacen = almacen.getNodoAnterior();
         }
-        invertir(trayectoria.getAlmacenes());
+        Collections.reverse(Arrays.asList(trayectoria.getAlmacenes()));
+        int cont = 0;
         for (NodoAlmacen almacenAux : trayectoria.getAlmacenes()) {
-            datos += almacenAux.getNombre() + " -> ";
+            if (cont != trayectoria.getSize()-1) {
+                datos += almacenAux.getNombre() + " -> ";
+            }else{
+                datos += almacenAux.getNombre();
+            }
+            cont++;
         }
         JOptionPane.showMessageDialog(null, datos);
         return productoStock;
@@ -131,10 +151,12 @@ public class Amazon {
         int distMayor = 0;
         for (NodoAlmacen almacenDestino : misAlmacenes.getAlmacenes()) {
             for (Producto productoTemp : almacenDestino.getListaProducto().getProductos()) {
-                if (productoTemp.getNombre().equalsIgnoreCase(producto.getNombre())) {
-                    if (productoTemp.getStock() > 0) {
-                        if (dijkstra(producto.getAlmacen(), almacenDestino).getMinDistancia() > distMayor) {
-                            distMayor = (int) dijkstra(producto.getAlmacen(), almacenDestino).getMinDistancia();
+                if (productoTemp != null) {
+                    if (productoTemp.getNombre().equalsIgnoreCase(producto.getNombre())) {
+                        if (productoTemp.getStock() > 0) {
+                            if (dijkstra(producto.getAlmacen(), almacenDestino).getMinDistancia() > distMayor) {
+                                distMayor = (int) dijkstra(producto.getAlmacen(), almacenDestino).getMinDistancia();
+                            }
                         }
                     }
                 }
@@ -402,7 +424,7 @@ public class Amazon {
         return null;
     }
 
-    public void actualizarRepositorio(ListaNodoAlmacen almacenesCargados) {
+    public void actualizarRepositorioArchivo(ListaNodoAlmacen almacenesCargados) {
         try {
             boolean encontrado = false;
             ListaNodoAlmacen almacenesAux = new ListaNodoAlmacen();
@@ -465,6 +487,40 @@ public class Amazon {
             JOptionPane.showMessageDialog(null, "No se pudo actualizar el repositorio " + ex);
         }
     }
+    
+    public void actualizarRepositorioSobrescribir() {
+        try {
+            FileWriter archivoDatos = null;
+            archivoDatos = new FileWriter("src/Archivos/Amazon.txt");
+            String datos = "";
+            datos = "Almacenes;\n";
+            for (NodoAlmacen almacen : misAlmacenes.getAlmacenes()) {
+                datos += "Almacen " + almacen.getNombre() + ":\n";
+                for (int i = 0; i < almacen.getListaProducto().getSize(); i++) {
+                    datos += almacen.getListaProducto().getProductos()[i].getNombre() + "," + almacen.getListaProducto().getProductos()[i].getStock();
+                    if (i == almacen.getListaProducto().getSize() - 1) {
+                        datos += ";\n";
+                    } else {
+                        datos += "\n";
+                    }
+                }
+            }
+            datos += "Rutas;\n";
+            for (NodoAlmacen almacen : misAlmacenes.getAlmacenes()) {
+                for (Arista arista : almacen.getListaArista().getAristas()) {
+                    datos += arista.getNodoOrigen().getNombre() + "," + arista.getNodoDestino().getNombre() + "," + arista.getDistancia() + "\n";
+                }
+            }
+            archivoDatos.write("");
+            archivoDatos.write(datos);
+            archivoDatos.close();
+            JOptionPane.showMessageDialog(null, "Repositorio actualizado Correctamente");
+
+        } catch (IOException ex) {
+            Logger.getLogger(Amazon.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "No se pudo actualizar el repositorio " + ex);
+        }
+    }
 
     public void reportar() {
         setAlmacenFalse();
@@ -489,9 +545,12 @@ public class Amazon {
     public Producto buscarProducto(String nombreProducto, String nombreAlmacen) {
         NodoAlmacen almacen = getAlmacen(nombreAlmacen);
         for (Producto producto : almacen.getListaProducto().getProductos()) {
-            if (producto.getNombre().equalsIgnoreCase(nombreProducto)) {
-                return producto;
+            if (producto != null) {
+                if (producto.getNombre().equalsIgnoreCase(nombreProducto)) {
+                    return producto;
+                }
             }
+            
         }
         return null;
     }

@@ -4,7 +4,6 @@
  */
 package Logico;
 
-import EstructurasAuxiliares.ListaArista;
 import EstructurasAuxiliares.ListaProducto;
 
 /**

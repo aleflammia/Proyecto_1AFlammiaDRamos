@@ -23,6 +23,7 @@ public class ListaPedido {
     }
     
     public ListaPedido(int capacidad){
+        capacidad = capacidad;
         pedidos = new Pedido[capacidad];
     }
     
@@ -45,5 +46,10 @@ public class ListaPedido {
             pedidos = Arrays.copyOf(pedidos, capacidad);
         }
         pedidos[cont - 1] = pedido;
+    }
+    public void eliminarTodos(){
+        pedidos = new Pedido[1];
+        capacidad = 1;
+        cont = 0;
     }
 }

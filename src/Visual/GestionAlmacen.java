@@ -7,20 +7,19 @@ package Visual;
 import EstructurasAuxiliares.ListaNodoAlmacen;
 import Logico.Amazon;
 import Logico.NodoAlmacen;
-import java.io.File;
-import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
+import java.awt.Frame;
 
 /**
  *
  * @author Alessandro
  */
-public class CargarArchivo extends javax.swing.JDialog {
+public class GestionAlmacen extends javax.swing.JDialog {
 
     DefaultTableModel modelo = new DefaultTableModel();
     ListaNodoAlmacen almacenes;
     
-    public CargarArchivo(java.awt.Frame parent, boolean modal) {
+    public GestionAlmacen(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
@@ -28,6 +27,7 @@ public class CargarArchivo extends javax.swing.JDialog {
         String[] cabeceraTabla = new String[]{"Almacen", "Conecta con", "Distancia", "Productos", "Stock"};
         modelo.setColumnIdentifiers(cabeceraTabla);
         tabla.setModel(modelo);
+        crearTabla();
     }
 
     /**
@@ -41,18 +41,17 @@ public class CargarArchivo extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
+        btnCerrar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
-        txtFieldArchivo = new javax.swing.JTextField();
         guardarArchivo = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        crearNuevaRuta = new javax.swing.JButton();
         lblTitulo = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         lblSeparador = new javax.swing.JLabel();
+        crearNuevoProducto = new javax.swing.JButton();
+        crearAlmacen = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -62,13 +61,13 @@ public class CargarArchivo extends javax.swing.JDialog {
         jPanel2.setBackground(new java.awt.Color(51, 51, 51));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton2.setText("Cerrar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnCerrar.setText("Cerrar");
+        btnCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnCerrarActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 20, 169, 40));
+        jPanel2.add(btnCerrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 20, 169, 40));
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 320, 860, 80));
 
@@ -90,14 +89,6 @@ public class CargarArchivo extends javax.swing.JDialog {
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 50, 590, 240));
 
-        txtFieldArchivo.setEditable(false);
-        txtFieldArchivo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtFieldArchivoActionPerformed(evt);
-            }
-        });
-        jPanel1.add(txtFieldArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 210, 40));
-
         guardarArchivo.setBackground(new java.awt.Color(0, 153, 51));
         guardarArchivo.setText("Guardar Archivo");
         guardarArchivo.setEnabled(false);
@@ -106,66 +97,82 @@ public class CargarArchivo extends javax.swing.JDialog {
                 guardarArchivoActionPerformed(evt);
             }
         });
-        jPanel1.add(guardarArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, 210, 40));
+        jPanel1.add(guardarArchivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 240, 210, 50));
 
-        jButton4.setText("Cargar Archivo");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        crearNuevaRuta.setText("Crear nuevas rutas");
+        crearNuevaRuta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                crearNuevaRutaActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 210, 40));
+        jPanel1.add(crearNuevaRuta, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 210, 40));
 
         lblTitulo.setBackground(new java.awt.Color(153, 153, 153));
         lblTitulo.setFont(new java.awt.Font("Arial Black", 0, 25)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(51, 51, 51));
-        lblTitulo.setText("Contenido del Archivo");
+        lblTitulo.setText("Almacenes");
         jPanel1.add(lblTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 10, 460, -1));
 
-        jLabel1.setText(" Y visualizarlo en la tabla de la izquierda");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 65, 220, 20));
+        jLabel2.setText("Puede guardar lso cambios aquí o en el ");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 190, 220, 20));
 
-        jLabel2.setText("perderás al cerrar el programa");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 223, 220, 20));
-
-        jLabel3.setText("Presiona el botón para cargar un poducto");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 230, 20));
-
-        jLabel4.setText("Si no guardas los datos en el sistema los");
+        jLabel4.setText("Menu principal presionando \"Actualizar\"");
         jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 230, 20));
 
         lblSeparador.setBackground(new java.awt.Color(51, 51, 51));
         lblSeparador.setOpaque(true);
         jPanel1.add(lblSeparador, new org.netbeans.lib.awtextra.AbsoluteConstraints(255, 20, 2, 280));
 
+        crearNuevoProducto.setText("Stock Productos");
+        crearNuevoProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crearNuevoProductoActionPerformed(evt);
+            }
+        });
+        jPanel1.add(crearNuevoProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, 210, 40));
+
+        crearAlmacen.setText("Crear un Almacen");
+        crearAlmacen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crearAlmacenActionPerformed(evt);
+            }
+        });
+        jPanel1.add(crearAlmacen, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 210, 40));
+
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 860, 400));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtFieldArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldArchivoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtFieldArchivoActionPerformed
-
     private void guardarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarArchivoActionPerformed
-        Amazon.getInstance().actualizarRepositorioArchivo(almacenes);
+        Amazon.getInstance().actualizarRepositorioSobrescribir();
         guardarArchivo.setEnabled(false);
     }//GEN-LAST:event_guardarArchivoActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        File archivo;
-        JFileChooser seleccionarFile = new JFileChooser();
-        seleccionarFile.showOpenDialog(null);
-        archivo = seleccionarFile.getSelectedFile();
-        almacenes = Amazon.getInstance().cargarDatos(archivo.getAbsolutePath());
-        txtFieldArchivo.setText(archivo.getAbsolutePath());
+    private void crearNuevaRutaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearNuevaRutaActionPerformed
+        CrearRuta crearRuta = new CrearRuta(new Frame(), true);
+        crearRuta.setVisible(true);
+        crearTabla();
         guardarArchivo.setEnabled(true);
-        crearTabla(almacenes);
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_crearNuevaRutaActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnCerrarActionPerformed
+
+    private void crearNuevoProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearNuevoProductoActionPerformed
+        ProductoStock productoStock = new ProductoStock(new Frame(), true);
+        productoStock.setVisible(true);
+        crearTabla();
+        guardarArchivo.setEnabled(true);
+    }//GEN-LAST:event_crearNuevoProductoActionPerformed
+
+    private void crearAlmacenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearAlmacenActionPerformed
+        CrearAlmacen crearAlmacen = new CrearAlmacen(new Frame(), true);
+        crearAlmacen.setVisible(true);
+        crearTabla();
+        guardarArchivo.setEnabled(true);
+    }//GEN-LAST:event_crearAlmacenActionPerformed
 
     /**
      * @param args the command line arguments
@@ -184,21 +191,23 @@ public class CargarArchivo extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CargarArchivo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GestionAlmacen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CargarArchivo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GestionAlmacen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CargarArchivo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GestionAlmacen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CargarArchivo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GestionAlmacen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                CargarArchivo dialog = new CargarArchivo(new javax.swing.JFrame(), true);
+                GestionAlmacen dialog = new GestionAlmacen(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -211,12 +220,12 @@ public class CargarArchivo extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCerrar;
+    private javax.swing.JButton crearAlmacen;
+    private javax.swing.JButton crearNuevaRuta;
+    private javax.swing.JButton crearNuevoProducto;
     private javax.swing.JButton guardarArchivo;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -224,15 +233,14 @@ public class CargarArchivo extends javax.swing.JDialog {
     private javax.swing.JLabel lblSeparador;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JTable tabla;
-    private javax.swing.JTextField txtFieldArchivo;
     // End of variables declaration//GEN-END:variables
 
-    private void crearTabla(ListaNodoAlmacen almacenes) {
+    private void crearTabla() {
         
         String[] columnas = new String[modelo.getColumnCount()];
         modelo.setRowCount(0);
         int size;        
-        for (NodoAlmacen almacen: almacenes.getAlmacenes()) {
+        for (NodoAlmacen almacen: Amazon.getInstance().getListaMisAlmacenes().getAlmacenes()) {
             if (almacen.getListaProducto().getSize() > almacen.getListaArista().getSize()) {
                 size = almacen.getListaProducto().getSize();
             }else{
@@ -244,7 +252,6 @@ public class CargarArchivo extends javax.swing.JDialog {
                 }else if (i < almacen.getListaArista().getSize() && i >= almacen.getListaProducto().getSize()) {
                     modelo.addRow(new Object[]{almacen.getNombre(), almacen.getListaArista().getAristas()[i].getNodoDestino().getNombre(), almacen.getListaArista().getAristas()[i].getDistancia(), "",""});
                 }else{
-                    System.out.println("Size en es momento: " + i);
                     modelo.addRow(new Object[]{almacen.getNombre(), almacen.getListaArista().getAristas()[i].getNodoDestino().getNombre(), almacen.getListaArista().getAristas()[i].getDistancia(), almacen.getListaProducto().getProductos()[i].getNombre(), almacen.getListaProducto().getProductos()[i].getStock()});
                 }
             }

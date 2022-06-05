@@ -47,4 +47,11 @@ public class ListaProducto {
         }
         productos[cont - 1] = producto;
     }
+    
+    public void eliminarTodos(){
+        productos = new Producto[1];
+        capacidad = 1;
+        cont = 0;
+    }
+
 }

@@ -46,4 +46,10 @@ public class ListaNodoAlmacen{
         }
         almacenes[cont - 1] = almacen;
     }
+    
+    public void eliminarTodos(){
+        almacenes = new NodoAlmacen[1];
+        capacidad = 1;
+        cont = 0;
+    }
 }

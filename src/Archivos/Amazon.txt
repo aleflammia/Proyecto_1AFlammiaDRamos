@@ -1,14 +1,17 @@
 Almacenes;
+Almacen H:
+RAM,7
+Pantalla,4;
 Almacen F:
-Pantalla,3
+Pantalla,0
 RAM,2
 Procesador,1;
 Almacen A:
-Pantalla,3
+Pantalla,1
 RAM,2
 Procesador,1;
 Almacen B:
-Pantalla,3
+Pantalla,2
 Grafica,5;
 Almacen C:
 Placa,7
@@ -19,6 +22,7 @@ Almacen E:
 Microfono,7
 Audifonos,10;
 Rutas;
+H,C,1
 F,B,10
 F,A,20
 A,B,10

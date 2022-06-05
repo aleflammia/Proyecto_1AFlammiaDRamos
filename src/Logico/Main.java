@@ -1,6 +1,5 @@
 package Logico;
 
-import EstructurasAuxiliares.ListaNodoAlmacen;
 import EstructurasAuxiliares.ListaProducto;
 import javax.swing.JOptionPane;
 

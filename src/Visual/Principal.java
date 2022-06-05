@@ -5,6 +5,7 @@
 package Visual;
 
 import Logico.Amazon;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -190,8 +191,8 @@ public class Principal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteActionPerformed
-        Reporte reporteT = new Reporte(this, true);
-        reporteT.setVisible(true);
+        Reporte reporte = new Reporte(this, true);
+        reporte.setVisible(true);
     }//GEN-LAST:event_btnReporteActionPerformed
 
     private void btnCargarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarArchivoActionPerformed
@@ -200,11 +201,13 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCargarArchivoActionPerformed
 
     private void btnRealizarPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRealizarPedidoActionPerformed
-
+        RealizarPedido realizarPedido = new RealizarPedido(this, true);
+        realizarPedido.setVisible(true);
     }//GEN-LAST:event_btnRealizarPedidoActionPerformed
 
     private void btnGestionAlmacenesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGestionAlmacenesActionPerformed
-        // TODO add your handling code here:
+        GestionAlmacen gestionAlmacen = new GestionAlmacen(this, true);
+        gestionAlmacen.setVisible(true);
     }//GEN-LAST:event_btnGestionAlmacenesActionPerformed
 
     private void btnMostrarGrafoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarGrafoActionPerformed
@@ -212,7 +215,8 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnMostrarGrafoActionPerformed
 
     private void btnActualizarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarArchivoActionPerformed
-        // TODO add your handling code here:
+        Amazon.getInstance().actualizarRepositorioSobrescribir();
+        JOptionPane.showMessageDialog(null, "El repositorio fue actualizado correctamente");
     }//GEN-LAST:event_btnActualizarArchivoActionPerformed
 
     /**
